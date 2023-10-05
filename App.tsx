@@ -39,13 +39,10 @@ export type RootStackParams = {
 };
 const RootStack = createNativeStackNavigator<RootStackParams>();
 
-function App(): JSX.Element {
+function MainApp(): JSX.Element {
 
   const isDarkMode = useColorScheme() === 'dark';
 
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
   return (
     <NavigationContainer >
       <RootStack.Navigator initialRouteName={'signIn'} screenOptions={{ headerShown: false }}>
@@ -77,7 +74,7 @@ const styles = StyleSheet.create({
 
 });
 
-export default App;
+export default MainApp;
 
 /*
 reference

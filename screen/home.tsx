@@ -5,19 +5,32 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import firebase from '../firebase';
 import { RootStackParams } from '../App';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack/lib/typescript/src/types';
-
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState, AppDispatch } from '../store'; 
+import {
+  setUserName,
+  setUserlist,
+  setUserData,
+  setGetUserlist,
+  setKeyword,
+  setPage,
+  setIsLoadMoreData,
+} from '../slice/homeSlice';
 const userImg='https://img.icons8.com/ios/100/circled.png';
 
 const Home = () => {
   
-  const [userName, setUserName] = useState('');
-  const [userlist,setUserlist] = useState<{ key: any; username: any;}[]>([]);
-  const [userData, setUserData] = useState<{ key: any; username: any;}[]>([]);
-  const [getUserlist,setgetUserList]=useState(true);
-  const [keyword,setKeyword]=useState('')
-  const [page,setpage]=useState(6)
+  const userName = useSelector((state: RootState) => state.user.userName);
+  const userlist = useSelector((state: RootState) => state.user.userlist);
+  const userData = useSelector((state: RootState) => state.user.userData);
+  const getUserlist = useSelector((state: RootState) => state.user.getUserlist);
+  const keyword = useSelector((state: RootState) => state.user.keyword);
+  const page = useSelector((state: RootState) => state.user.page);
+  const isLoadMoreData = useSelector((state: RootState) => state.user.isLoadMoreData);
   const slicedData = userlist.slice(0,page);
   const navigation=useNavigation<NativeStackNavigationProp<RootStackParams>>();
+
+  const dispatch: AppDispatch = useDispatch();
   //get user name----------------------------------------------------
   useEffect(() => {
     const currentUser = firebase.auth().currentUser;
@@ -31,14 +44,14 @@ const Home = () => {
         .then((snapshot) => {
           const userName= snapshot.val();
 
-          setUserName('Hi, ' + userName);
+          dispatch(setUserName('Hi, ' + userName));
         })
         .catch((error) => {
 
         });
     } else {
 
-      setUserName('Hi, User');
+      dispatch(setUserName('Hi, User'));
     }
   }, []);
 
@@ -55,8 +68,8 @@ const Home = () => {
           username: data[uid].username, 
         }));
 
-        setUserData(userList);
-        setUserlist(userList);
+        dispatch(setUserData(userList));
+        dispatch(setUserlist(userList));
       }
     });
   }, [getUserlist]);
@@ -70,14 +83,14 @@ const Home = () => {
   }
   //reload list
   const reloadUserList =() =>{
-    setgetUserList(!getUserlist);
-    setKeyword("");
-    setUserlist(userlist);
-    setpage(6);
+    dispatch(setGetUserlist(!getUserlist));
+    dispatch(setKeyword(""));
+    dispatch(setUserlist(userlist));
+    dispatch(setPage(6));
   }
   //search bar function
   const searchBarTextOnChange=(searchKeyword:string)=>{
-    setKeyword(searchKeyword);
+    dispatch(setKeyword(searchKeyword));
   }
   const searchBarButtoOnClick =()=>{
     const filteredData = userData.filter((Customer) =>
@@ -85,13 +98,12 @@ const Home = () => {
     );
     setUserlist(filteredData);
   }
-  const[isloadMoreData,setisLoadMoreData]=useState(false)
 
   const onloadMoreData=()=>{
-    setisLoadMoreData(true);
+    dispatch(setIsLoadMoreData(true));
     setTimeout(() => {
-      setpage(page+1)
-      setisLoadMoreData(false);
+      setPage(page+1)
+      dispatch(setIsLoadMoreData(false));
     }, 1000);
   }
     
@@ -149,7 +161,7 @@ const Home = () => {
           </View>
           //list------------------------------------------
         )}
-          ListFooterComponent={()=>(isloadMoreData?
+          ListFooterComponent={()=>(isLoadMoreData?
             <ActivityIndicator size="large" color="red"/>:null
         )}
       />

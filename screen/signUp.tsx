@@ -5,47 +5,49 @@ import {ref, set} from 'firebase/database';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack/lib/typescript/src/types';
 import { RootStackParams } from '../App';
 import firebase from '../firebase';
-import isValidEmail from './func/isValidEmail';
+import { RootState, AppDispatch } from '../store';
+import { setEmail } from '../slice/emailSlice';
+import { setPassword, setVisible } from '../slice/passwordSlice';
+import { useSelector, useDispatch } from 'react-redux';
 
 const SignUp = () => {
 
   const navigation=useNavigation<NativeStackNavigationProp<RootStackParams>>()
 
   //email input text----------------------------------------------------
-  const [email,setemail] = useState('');
-  const [checkemail, setcheckemail] = useState<string>('');
-  const handleEmailChange = (text:string) =>{
+  const email = useSelector((state: RootState) => state.email.email);
+  const checkEmail = useSelector((state: RootState) => state.email.checkEmail);
+  const isValidEmail = useSelector((state: RootState) => state.email.isvalidEmail);
+  const dispatch: AppDispatch = useDispatch();
 
-    if(isValidEmail(text)){
-      setcheckemail('Email format valid');
-    }else{
-      setcheckemail('Email format is not valid');
-    }
-
-    setemail(text);
-    };
+  const handleEmailChange = (text: string) => {
+    dispatch(setEmail(text));
+  };
 
   //password input text----------------------------------------------------
-  const[password,setpassword]=useState('');
-  const[visible,setvisible]=useState<boolean>(true);
-  const[imageVisible,setImgVisible]=useState('https://img.icons8.com/material-outlined/24/invisible.png');
-  
-  const handlePasswordChange = (text:string) =>{
-    setpassword(text);};
-  const handlevisibleChange = () =>{
-    if(visible){
-      setImgVisible('https://img.icons8.com/material-outlined/24/visible--v1.png');
-      setvisible(false);
+  //password input text----------------------------------------------------
+  const password = useSelector((state: RootState) => state.password.password);
+  const isVisible = useSelector((state: RootState) => state.password.isVisible);
+  const [imageVisible,setImageVisible] = useState('https://img.icons8.com/material-outlined/24/invisible.png');
+
+  const handlePasswordChange = (text: string) => {
+    dispatch(setPassword(text));
+  };
+  const handleVisibleChange=()=>{
+    if(isVisible){
+      dispatch(setVisible(false));
+      setImageVisible('https://img.icons8.com/material-outlined/24/visible--v1.png');
     }else{
-      setImgVisible('https://img.icons8.com/material-outlined/24/invisible.png');
-      setvisible(true);
+      dispatch(setVisible(true));
+      setImageVisible('https://img.icons8.com/material-outlined/24/invisible.png');
     }
-      };
+    
+  }
 
   //sign in button on press----------------------------------------------------
   const handleSignIn =() =>{
-    setpassword('')
-    setemail('')
+    dispatch(setPassword(''));
+    dispatch(setEmail(''));
     navigation.navigate('signIn');
   };
 
@@ -83,7 +85,7 @@ const SignUp = () => {
           onChangeText={handleEmailChange}
           value={email}/>
 
-      <Text style={isValidEmail(email) ? styles.validText : styles.invalidText}>{checkemail}</Text>
+      <Text style={isValidEmail ? styles.validText : styles.invalidText}>{checkEmail}</Text>
 
       <Text style={styles.contentTitle} >Password</Text>
 
@@ -91,11 +93,11 @@ const SignUp = () => {
 
         <TextInput style={styles.input}
           placeholder='at least 6 number'
-          secureTextEntry={visible}
+          secureTextEntry={isVisible}
           onChangeText={handlePasswordChange}
           value={password}/>
 
-        <Pressable onPress={handlevisibleChange}>
+        <Pressable onPress={handleVisibleChange}>
 
           <Image
             source={{ uri: imageVisible }}
