@@ -96,13 +96,13 @@ const Home = () => {
     const filteredData = userData.filter((Customer) =>
       Customer.key.toLowerCase().includes(keyword.toLowerCase())
     );
-    setUserlist(filteredData);
+    dispatch(setUserlist(filteredData));
   }
 
   const onloadMoreData=()=>{
     dispatch(setIsLoadMoreData(true));
     setTimeout(() => {
-      setPage(page+1)
+      dispatch(setPage(page+1))
       dispatch(setIsLoadMoreData(false));
     }, 1000);
   }
