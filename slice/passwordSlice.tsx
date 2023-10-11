@@ -8,7 +8,7 @@ interface passwordState {
 
 const initialState: passwordState = {
   password: '',
-  isVisible: false ,
+  isVisible: true ,
   visibleImg:'',
 };
 

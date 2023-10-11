@@ -44,6 +44,10 @@ const SignIn = () => {
   }
   //press sign up----------------------------------------------------
   const handleSignUp =() =>{
+    setImageVisible('https://img.icons8.com/material-outlined/24/invisible.png');
+    dispatch(setVisible(true));
+    dispatch(setPassword(''));
+    dispatch(setEmail(''));
     navigation.navigate('signUp');
   };
   //press sign in----------------------------------------------------
@@ -52,6 +56,8 @@ const SignIn = () => {
       .auth()
       .signInWithEmailAndPassword(email, password)
       .then(async() => {
+        setImageVisible('https://img.icons8.com/material-outlined/24/invisible.png');
+        dispatch(setVisible(true));
         dispatch(setEmail(''));
         dispatch(setPassword(''));
         navigation.navigate('home');

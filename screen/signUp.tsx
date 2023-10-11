@@ -46,6 +46,8 @@ const SignUp = () => {
 
   //sign in button on press----------------------------------------------------
   const handleSignIn =() =>{
+    setImageVisible('https://img.icons8.com/material-outlined/24/invisible.png');
+    dispatch(setVisible(true));
     dispatch(setPassword(''));
     dispatch(setEmail(''));
     navigation.navigate('signIn');

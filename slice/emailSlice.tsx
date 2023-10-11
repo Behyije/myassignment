@@ -19,9 +19,13 @@ const emailSlice = createSlice({
     setEmail: (state, action: PayloadAction<string>) => {
       state.email = action.payload;
       state.isvalidEmail=isValidEmail(action.payload)
-      state.checkEmail = isValidEmail(action.payload)
+      if(state.email == '' ){
+        state.checkEmail = '';
+      }else{
+        state.checkEmail = isValidEmail(action.payload)
         ? 'Email format valid'
         : 'Email format is not valid';
+      }
     },
   },
 });
